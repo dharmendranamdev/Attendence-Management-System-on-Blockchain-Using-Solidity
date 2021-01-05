@@ -1,0 +1,204 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.2.6/dist/web3.min.js"></script>
+        <script type="text/javascript">
+            
+            var contract;
+            //Generate HashCode
+            //When you Compile "Attendence.sol" file on http://remix.ethereum.org/ then you have 
+            //to confirm the transaction ,then you have to copy the hash value of that Transaction
+            //and  write it here
+            //if you are facing any problem,you can email me freely : dnamdev2020@gmail.com
+            var address = "<Hash_Code>";
+            var abi = 
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "adr",
+				"type": "address"
+			}
+		],
+		"name": "addAdmin",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "_rollno",
+				"type": "int256"
+			}
+		],
+		"name": "addAttendance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "_rollno",
+				"type": "int256"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "int256",
+				"name": "_attendance",
+				"type": "int256"
+			}
+		],
+		"name": "addStudent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "_rollno",
+				"type": "int256"
+			}
+		],
+		"name": "viewAttendance",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "int256",
+						"name": "rollno",
+						"type": "int256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "int256",
+						"name": "attendance",
+						"type": "int256"
+					}
+				],
+				"internalType": "struct Attendance.Student1",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+	
+
+            web3 = new Web3(web3.currentProvider);
+            contract = new web3.eth.Contract(abi, address);
+           
+            $(document).ready(function(){
+
+
+                $("#_add").click(function(){
+
+                    web3.eth.getAccounts().then(function(accounts){
+
+                        var acnt = accounts[0];
+                        var sid = $("#_sid").val();
+                        var name = $("#_name").val();
+                        var i = 0;
+                        return contract.methods.addStudent(sid, name, 0).send({from: acnt});
+                    }).then(function(trx){
+                        console.log(trx);
+                        alert("successfully added");
+                    })
+                })
+
+                $("#_addAttendence").click(function(){
+
+                    web3.eth.getAccounts().then(function(accounts){
+
+                        var acnt = accounts[0];
+                        var sid = $("#_rno").val();
+                        return contract.methods.addAttendance(sid).send({from: acnt});
+                    }).then(function(trx){
+                        console.log(trx);
+                        alert("successfully added");
+                    })
+                })
+
+
+                $("#_viewAttendence").click(function(){
+
+                    var s_id = parseInt($("#_rno").val());
+                    contract.methods.viewAttendance(s_id).call().then(function(name){
+                        $("#_viewname").val(name);
+                        console.log(name);
+                    })
+
+                })
+
+
+                $("#_addAdmin").click(function(){
+
+                    web3.eth.getAccounts().then(function(accounts){
+
+                        var acnt = accounts[0];
+                        var newad = $("#_newadmin").val();
+                        return contract.methods.addAdmin(newad).send({from: acnt});
+                    }).then(function(trx){
+                        console.log(trx);
+                        alert("successfully added");
+                    })
+                })
+
+            })
+
+        </script>
+    </head>
+    <body>
+    	  <h1>Add Student</h1>
+          <label for="fname">Student ID</label>
+          <input type="text" id="_sid">
+          <label for="lname">Name</label>
+          <input type="text" id="_name" ><br><br>
+          <input type="submit" value="Add" id="_add">
+    
+          <br><br><br><br>
+
+
+          <h1>Add Attendence & View Attendence</h1>
+          <label for="rno">RollNo</label>
+          <input type="text" id="_rno">
+          <input type="submit" value="Add" id="_addAttendence">
+          <br><br>
+          <label for="detail">Roll no, Name, Attendence</label>
+          <input type="text" id="_viewname" >
+       
+          <input type="submit" value="View" id="_viewAttendence">
+
+
+          <br><br><br><br>
+
+          <h1>Add Admin</h1>
+          <label for="addnewAdmin">New Admin</label>
+          <input type="text" id="_newadmin">
+          <input type="submit" value="Add" id="_addAdmin">
+        
+        <p id="tr1"></p>
+        
+        </body>
+</html>
